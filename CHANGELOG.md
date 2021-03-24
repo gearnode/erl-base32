@@ -9,3 +9,5 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 - Encode base32.
 - Decode base32.
+- Encode base32hex.
+- Decode base32hex.
