@@ -31,4 +31,19 @@ encode_test_() ->
                  base32:encode(<<"fooba">>)),
    ?_assertEqual(<<"MZXW6YTBOI======">>,
                  base32:encode(<<"foobar">>))].
-                   
+                 
+decode_test_() ->
+  [?_assertEqual(<<>>,
+                 base32:decode(<<>>)),
+   ?_assertEqual(<<"f">>,
+                 base32:decode(<<"MY======">>)),
+   ?_assertEqual(<<"fo">>,
+                 base32:decode(<<"MZXQ====">>)),
+   ?_assertEqual(<<"foo">>,
+                 base32:decode(<<"MZXW6===">>)),
+   ?_assertEqual(<<"foob">>,
+                 base32:decode(<<"MZXW6YQ=">>)),
+   ?_assertEqual(<<"fooba">>,
+                 base32:decode(<<"MZXW6YTB">>)),
+   ?_assertEqual(<<"foobar">>,
+                 base32:decode(<<"MZXW6YTBOI======">>))].
