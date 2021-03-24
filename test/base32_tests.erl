@@ -33,17 +33,21 @@ encode_test_() ->
                  base32:encode(<<"foobar">>))].
                  
 decode_test_() ->
-  [?_assertEqual(<<>>,
+  [?_assertEqual({ok, <<>>},
                  base32:decode(<<>>)),
-   ?_assertEqual(<<"f">>,
+   ?_assertEqual({ok, <<"f">>},
                  base32:decode(<<"MY======">>)),
-   ?_assertEqual(<<"fo">>,
+   ?_assertEqual({ok, <<"fo">>},
                  base32:decode(<<"MZXQ====">>)),
-   ?_assertEqual(<<"foo">>,
+   ?_assertEqual({ok, <<"foo">>},
                  base32:decode(<<"MZXW6===">>)),
-   ?_assertEqual(<<"foob">>,
+   ?_assertEqual({ok, <<"foob">>},
                  base32:decode(<<"MZXW6YQ=">>)),
-   ?_assertEqual(<<"fooba">>,
+   ?_assertEqual({ok, <<"fooba">>},
                  base32:decode(<<"MZXW6YTB">>)),
-   ?_assertEqual(<<"foobar">>,
-                 base32:decode(<<"MZXW6YTBOI======">>))].
+   ?_assertEqual({ok, <<"foobar">>},
+                 base32:decode(<<"MZXW6YTBOI======">>)),
+   ?_assertEqual({error, {invalid_base32, <<$1>>}},
+                base32:decode(<<"M1======">>)),
+   ?_assertEqual({error, invalid_base32},
+                base32:decode(<<"1">>))].

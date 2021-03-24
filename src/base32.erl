@@ -67,9 +67,14 @@ enc_b32_digit(Digit) when Digit =< 25 ->
 enc_b32_digit(Digit) when Digit =< 31 ->
   Digit + 24.
 
--spec decode(binary()) -> binary().
+-spec decode(binary()) -> {ok, binary()} | {error, term()}.
 decode(Bin) ->
-  decode(Bin, <<>>).
+  try
+    {ok, decode(Bin, <<>>)}
+  catch
+    throw:{error, Reason} ->
+      {error, Reason}
+  end.
 
 -spec decode(binary(), binary()) -> binary().
 decode(<<>>, Acc) ->
@@ -109,7 +114,9 @@ decode(<<A0:8, B0:8, C0:8, D0:8, E0:8, F0:8, G0:8, H0:8, Rest/binary>>, Acc) ->
   F = dec_b32_char(F0),
   G = dec_b32_char(G0),
   H = dec_b32_char(H0),
-  decode(Rest, <<Acc/binary, A:5, B:5, C:5, D:5, E:5, F:5, G:5, H:5>>).
+  decode(Rest, <<Acc/binary, A:5, B:5, C:5, D:5, E:5, F:5, G:5, H:5>>);
+decode(Bin, _) ->
+  throw({error, invalid_base32}).
 
 -spec dec_b32_char($A..$Z | $2..$7) -> 0..31.
 dec_b32_char(Char) when Char >= $A, Char =< $Z ->
@@ -117,4 +124,4 @@ dec_b32_char(Char) when Char >= $A, Char =< $Z ->
 dec_b32_char(Char) when Char >= $2, Char =< $7 ->
   Char - 24;
 dec_b32_char(Char) ->
-  erlang:error({invalid_base32, <<Char>>}).
+  throw({error, {invalid_base32, <<Char>>}}).
