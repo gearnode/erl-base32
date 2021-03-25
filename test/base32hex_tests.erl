@@ -30,7 +30,19 @@ encode_test_() ->
    ?_assertEqual(<<"CPNMUOJ1">>,
                  base32hex:encode(<<"fooba">>)),
    ?_assertEqual(<<"CPNMUOJ1E8======">>,
-                 base32hex:encode(<<"foobar">>))].
+                 base32hex:encode(<<"foobar">>)),
+   ?_assertEqual(<<"CO">>,
+                 base32hex:encode(<<"f">>, [nopad])),
+   ?_assertEqual(<<"CPNG">>,
+                 base32hex:encode(<<"fo">>, [nopad])),
+   ?_assertEqual(<<"CPNMU">>,
+                 base32hex:encode(<<"foo">>, [nopad])),
+   ?_assertEqual(<<"CPNMUOG">>,
+                 base32hex:encode(<<"foob">>, [nopad])),
+   ?_assertEqual(<<"CPNMUOJ1">>,
+                 base32hex:encode(<<"fooba">>, [nopad])),
+   ?_assertEqual(<<"CPNMUOJ1E8">>,
+                 base32hex:encode(<<"foobar">>, [nopad]))].
 
 decode_test_() ->
   [?_assertEqual({ok, <<>>},

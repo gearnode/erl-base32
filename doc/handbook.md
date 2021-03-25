@@ -17,9 +17,14 @@ versions can be modified without backward compatibility at any time.
 ### `encode/1`
 Encodes a binary into a base32 encoded binary.
 
+Same as `encode(Bin, [])`.
+
+### `encode/2`
+Encodes a binary into a base32 encoded binary.
+
 Example:
 ```erlang
-base32:encode(<<"foobar">>).
+base32:encode(<<"foobar">>, [nopad]).
 ```
 
 ### `decode/1`
@@ -34,9 +39,14 @@ base32:decode(<<"MZXW6YTBOI======">>).
 ### `encode/1`
 Encodes a binary into a base32hex encoded binary.
 
+Same as `encode(Bin, [])`.
+
+### `encode/2`
+Encodes a binary into a base32hex encoded binary.
+
 Example:
 ```erlang
-base32hex:encode(<<"foobar">>).
+base32hex:encode(<<"foobar">>, [nopad]).
 ```
 
 ### `decode/1`

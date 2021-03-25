@@ -14,16 +14,29 @@
 
 -module(base32).
 
--export([encode/1, decode/1]).
+-export([encode/1, encode/2,
+         decode/1]).
 
 -spec encode(binary()) -> binary().
 encode(Bin) when is_binary(Bin) ->
-  encode(Bin, <<>>).
+  encode(Bin, []).
 
--spec encode(binary(), binary()) -> binary().
-encode(<<>>, Acc) ->
+-spec encode(binary(), Options) -> binary()
+          when Options :: [Option],
+               Option :: nopad.
+encode(Bin, Options) when is_binary(Bin), is_list(Options) ->
+  case proplists:get_bool(nopad, Options) of
+    true ->
+      encode(nopad, Bin, <<>>);
+    false ->
+      encode(pad, Bin, <<>>)
+  end.
+
+-spec encode(nopad | pad, binary(), binary()) -> binary().
+encode(_, <<>>, Acc) ->
   Acc;
-encode(<<A0:5, B0:5, C0:5, D0:5, E0:5, F0:5, G0:5, H0:5, Rest/binary>>, Acc) ->
+encode(Mode, <<A0:5, B0:5, C0:5, D0:5, E0:5, F0:5, G0:5, H0:5, Rest/binary>>,
+       Acc) ->
   A = enc_b32_digit(A0),
   B = enc_b32_digit(B0),
   C = enc_b32_digit(C0),
@@ -32,8 +45,8 @@ encode(<<A0:5, B0:5, C0:5, D0:5, E0:5, F0:5, G0:5, H0:5, Rest/binary>>, Acc) ->
   F = enc_b32_digit(F0),
   G = enc_b32_digit(G0),
   H = enc_b32_digit(H0),
-  encode(Rest, <<Acc/binary, A, B, C, D, E, F, G, H>>);
-encode(<<A0:5, B0:5, C0:5, D0:5, E0:5, F0:5, G0:2>>, Acc) ->
+  encode(Mode, Rest, <<Acc/binary, A, B, C, D, E, F, G, H>>);
+encode(Mode, <<A0:5, B0:5, C0:5, D0:5, E0:5, F0:5, G0:2>>, Acc) ->
   A = enc_b32_digit(A0),
   B = enc_b32_digit(B0),
   C = enc_b32_digit(C0),
@@ -41,25 +54,44 @@ encode(<<A0:5, B0:5, C0:5, D0:5, E0:5, F0:5, G0:2>>, Acc) ->
   E = enc_b32_digit(E0),
   F = enc_b32_digit(F0),
   G = enc_b32_digit(G0 bsl 3),
-  encode(<<>>, <<Acc/binary, A, B, C, D, E, F, G, $=>>);
-encode(<<A0:5, B0:5, C0:5, D0:5, E0:4>>, Acc) ->
+  case Mode of
+    pad ->
+      encode(Mode, <<>>, <<Acc/binary, A, B, C, D, E, F, G, $=>>);
+    nopad ->
+      encode(Mode, <<>>, <<Acc/binary, A, B, C, D, E, F, G>>)
+  end;
+encode(Mode, <<A0:5, B0:5, C0:5, D0:5, E0:4>>, Acc) ->
   A = enc_b32_digit(A0),
   B = enc_b32_digit(B0),
   C = enc_b32_digit(C0),
   D = enc_b32_digit(D0),
   E = enc_b32_digit(E0 bsl 1),
-  encode(<<>>, <<Acc/binary, A, B, C, D, E, $=, $=, $=>>);
-encode(<<A0:5, B0:5, C0:5, D0:1>>, Acc) ->
+  case Mode of
+    pad ->
+      encode(Mode, <<>>, <<Acc/binary, A, B, C, D, E, $=, $=, $=>>);
+    nopad ->
+      encode(Mode, <<>>, <<Acc/binary, A, B, C, D, E>>)
+  end;
+encode(Mode, <<A0:5, B0:5, C0:5, D0:1>>, Acc) ->
   A = enc_b32_digit(A0),
   B = enc_b32_digit(B0),
   C = enc_b32_digit(C0),
   D = enc_b32_digit(D0 bsl 4),
-  encode(<<>>, <<Acc/binary, A, B, C, D, $=, $=, $=, $=>>);
-encode(<<A0:5, B0:3>>, Acc) ->
+  case Mode of
+    pad ->
+      encode(Mode, <<>>, <<Acc/binary, A, B, C, D, $=, $=, $=, $=>>);
+    nopad ->
+      encode(Mode, <<>>, <<Acc/binary, A, B, C, D>>)
+  end;
+encode(Mode, <<A0:5, B0:3>>, Acc) ->
   A = enc_b32_digit(A0),
   B = enc_b32_digit(B0 bsl 2),
-  encode(<<>>, <<Acc/binary, A, B, $=, $=, $=, $=, $=, $=>>).
-
+  case Mode of
+    pad ->
+      encode(Mode, <<>>, <<Acc/binary, A, B, $=, $=, $=, $=, $=, $=>>);
+    nopad ->
+      encode(Mode, <<>>, <<Acc/binary, A, B>>)
+  end.
 
 -spec enc_b32_digit(0..31) -> $A..$Z | $2..$7.
 enc_b32_digit(Digit) when Digit =< 25 ->
