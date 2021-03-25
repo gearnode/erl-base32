@@ -103,7 +103,7 @@ enc_b32_digit(Digit) when Digit =< 31 ->
         {ok, binary()} | {error, Reason}
           when Reason :: {invalid_base32, binary()}
                        | {invalid_base32, {unexpected_char, binary()}}.
-decode(Bin) ->
+decode(Bin) when is_binary(Bin) ->
   try
     {ok, decode(Bin, <<>>)}
   catch
@@ -140,6 +140,32 @@ decode(<<A0:8, B0:8, C0:8, D0:8, E0:8, F0:8, G0:8, $=>>, Acc) ->
   F = dec_b32_char(F0),
   G = dec_b32_char(G0) bsr 3,
   decode(<<>>, <<Acc/binary, A:5, B:5, C:5, D:5, E:5, F:5, G:2>>);
+decode(<<A0:8, B0:8, C0:8, D0:8, E0:8, F0:8, G0:8>>, Acc) ->
+  A = dec_b32_char(A0),
+  B = dec_b32_char(B0),
+  C = dec_b32_char(C0),
+  D = dec_b32_char(D0),
+  E = dec_b32_char(E0),
+  F = dec_b32_char(F0),
+  G = dec_b32_char(G0) bsr 3,
+  decode(<<>>, <<Acc/binary, A:5, B:5, C:5, D:5, E:5, F:5, G:2>>);
+decode(<<A0:8, B0:8, C0:8, D0:8, E0:8>>, Acc) ->
+  A = dec_b32_char(A0),
+  B = dec_b32_char(B0),
+  C = dec_b32_char(C0),
+  D = dec_b32_char(D0),
+  E = dec_b32_char(E0) bsr 1,
+  decode(<<>>, <<Acc/binary, A:5, B:5, C:5, D:5, E:4>>);
+decode(<<A0:8, B0:8, C0:8, D0:8>>, Acc) ->
+  A = dec_b32_char(A0),
+  B = dec_b32_char(B0),
+  C = dec_b32_char(C0),
+  D = dec_b32_char(D0) bsr 4,
+  decode(<<>>, <<Acc/binary, A:5, B:5, C:5, D:1>>);
+decode(<<A0:8, B0:8>>, Acc) ->
+  A = dec_b32_char(A0),
+  B = dec_b32_char(B0) bsr 2,
+  decode(<<>>, <<Acc/binary, A:5, B:3>>);
 decode(<<A0:8, B0:8, C0:8, D0:8, E0:8, F0:8, G0:8, H0:8, Rest/binary>>, Acc) ->
   A = dec_b32_char(A0),
   B = dec_b32_char(B0),

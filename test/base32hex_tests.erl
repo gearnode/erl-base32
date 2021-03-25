@@ -62,4 +62,16 @@ decode_test_() ->
    ?_assertEqual({error, {invalid_base32hex, {unexpected_char, <<$Z>>}}},
                  base32hex:decode(<<"AZ======">>)),
    ?_assertEqual({error, {invalid_base32hex, <<"Z">>}},
-                 base32hex:decode(<<"Z">>))].
+                 base32hex:decode(<<"Z">>)),
+   ?_assertEqual({ok, <<"f">>},
+                 base32hex:decode(<<"CO">>)),
+   ?_assertEqual({ok, <<"fo">>},
+                 base32hex:decode(<<"CPNG">>)),
+   ?_assertEqual({ok, <<"foo">>},
+                 base32hex:decode(<<"CPNMU">>)),
+   ?_assertEqual({ok, <<"foob">>},
+                 base32hex:decode(<<"CPNMUOG">>)),
+   ?_assertEqual({ok, <<"fooba">>},
+                 base32hex:decode(<<"CPNMUOJ1">>)),
+   ?_assertEqual({ok, <<"foobar">>},
+                 base32hex:decode(<<"CPNMUOJ1E8">>))].

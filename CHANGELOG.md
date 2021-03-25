@@ -9,6 +9,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 - Encode base32 without padding.
 - Encode base32hex without padding.
+- Decode base32 without padding.
+- Decode base32hex without padding.
 
 ## [0.1.0] - 2021-03-25
 ### Added

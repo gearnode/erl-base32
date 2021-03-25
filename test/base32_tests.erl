@@ -62,4 +62,16 @@ decode_test_() ->
    ?_assertEqual({error, {invalid_base32, {unexpected_char, <<$1>>}}},
                 base32:decode(<<"M1======">>)),
    ?_assertEqual({error, {invalid_base32, <<"1">>}},
-                base32:decode(<<"1">>))].
+                base32:decode(<<"1">>)),
+   ?_assertEqual({ok, <<"f">>},
+                 base32:decode(<<"MY">>)),
+   ?_assertEqual({ok, <<"fo">>},
+                 base32:decode(<<"MZXQ">>)),
+   ?_assertEqual({ok, <<"foo">>},
+                 base32:decode(<<"MZXW6">>)),
+   ?_assertEqual({ok, <<"foob">>},
+                 base32:decode(<<"MZXW6YQ">>)),
+   ?_assertEqual({ok, <<"fooba">>},
+                 base32:decode(<<"MZXW6YTB">>)),
+   ?_assertEqual({ok, <<"foobar">>},
+                 base32:decode(<<"MZXW6YTBOI">>))].
