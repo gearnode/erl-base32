@@ -46,4 +46,8 @@ decode_test_() ->
    ?_assertEqual({ok, <<"fooba">>},
                  base32hex:decode(<<"CPNMUOJ1">>)),
    ?_assertEqual({ok, <<"foobar">>},
-                 base32hex:decode(<<"CPNMUOJ1E8======">>))].
+                 base32hex:decode(<<"CPNMUOJ1E8======">>)),
+   ?_assertEqual({error, {invalid_base32hex, {unexpected_char, <<$Z>>}}},
+                 base32hex:decode(<<"AZ======">>)),
+   ?_assertEqual({error, {invalid_base32hex, <<"Z">>}},
+                 base32hex:decode(<<"Z">>))].

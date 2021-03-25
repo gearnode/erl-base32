@@ -115,8 +115,8 @@ decode(<<A0:8, B0:8, C0:8, D0:8, E0:8, F0:8, G0:8, H0:8, Rest/binary>>, Acc) ->
   G = dec_b32_char(G0),
   H = dec_b32_char(H0),
   decode(Rest, <<Acc/binary, A:5, B:5, C:5, D:5, E:5, F:5, G:5, H:5>>);
-decode(_, _) ->
-  throw({error, invalid_base32}).
+decode(Bin, _) ->
+  throw({error, {invalid_base32, Bin}}).
 
 -spec dec_b32_char($A..$Z | $2..$7) -> 0..31.
 dec_b32_char(Char) when Char >= $A, Char =< $Z ->
@@ -124,4 +124,4 @@ dec_b32_char(Char) when Char >= $A, Char =< $Z ->
 dec_b32_char(Char) when Char >= $2, Char =< $7 ->
   Char - 24;
 dec_b32_char(Char) ->
-  throw({error, {invalid_base32, <<Char>>}}).
+  throw({error, {invalid_base32, {unexpected_char, <<Char>>}}}).
