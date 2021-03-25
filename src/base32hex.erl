@@ -67,7 +67,10 @@ enc_b32hex_digit(Digit) when Digit =< 9 ->
 enc_b32hex_digit(Digit) when Digit =< 31 ->
   Digit + 55.
 
--spec decode(binary()) -> {ok, binary()} | {error, term()}.
+-spec decode(binary()) ->
+        {ok, binary()} | {error, Reason}
+          when Reason :: {invalid_base32hex, binary()}
+                       | {invalid_base32hex, {unexpected_char, binary()}}.
 decode(Bin) ->
   try
     {ok, decode(Bin, <<>>)}
