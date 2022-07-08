@@ -1,3 +1,4 @@
+%% Copyright (c) 2022 Bryan Frimin <bryan@frimin.fr>.
 %% Copyright (c) 2021 Exograd SAS.
 %%
 %% Permission to use, copy, modify, and/or distribute this software for any
@@ -186,4 +187,3 @@ dec_b32hex_char(Char) when Char >= $A, Char =< $V ->
   Char - 55;
 dec_b32hex_char(Char) ->
   throw({error, {invalid_base32hex, {unexpected_char, <<Char>>}}}).
-

@@ -1,3 +1,4 @@
+%% Copyright (c) 2022 Bryan Frimin <bryan@frimin.fr>.
 %% Copyright (c) 2021 Exograd SAS.
 %%
 %% Permission to use, copy, modify, and/or distribute this software for any
@@ -43,7 +44,7 @@ encode_test_() ->
                  base32:encode(<<"fooba">>, [nopad])),
    ?_assertEqual(<<"MZXW6YTBOI">>,
                  base32:encode(<<"foobar">>, [nopad]))].
-                 
+
 decode_test_() ->
   [?_assertEqual({ok, <<>>},
                  base32:decode(<<>>)),
